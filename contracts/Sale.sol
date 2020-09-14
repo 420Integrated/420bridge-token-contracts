@@ -1,29 +1,14 @@
-pragma solidity ^0.4.21;
-
-/*
-
-  BASIC ERC20 Sale Contract
-
-  Create this Sale contract first!
-
-     Sale(address ethwallet)   // this will send the received ETH funds to this address
-
-
-  @author Hunter Long
-  @repo https://github.com/hunterlong/ethereum-ico-contract
-
-*/
-
+pragma solidity ^0.4.22;
 
 contract ERC20 {
   uint public totalSupply;
-  function balanceOf(address who) constant returns (uint);
-  function allowance(address owner, address spender) constant returns (uint);
-  function transfer(address to, uint value) returns (bool ok);
-  function transferFrom(address from, address to, uint value) returns (bool ok);
-  function approve(address spender, uint value) returns (bool ok);
-  function mintToken(address to, uint256 value) returns (uint256);
-  function changeTransfer(bool allowed);
+  function balanceOf(address who) constant public returns (uint) ;
+  function allowance(address owner, address spender) constant public returns (uint) ;
+  function transfer(address to, uint value) public returns (bool ok) ;
+  function transferFrom(address from, address to, uint value) public returns (bool ok) ;
+  function approve(address spender, uint value) public returns (bool ok) ;
+  function mintToken(address to, uint256 value) public returns (uint256) ;
+  function changeTransfer(bool allowed) public;
 }
 
 
@@ -48,9 +33,9 @@ contract Sale {
     event Contribution(address from, uint256 amount);
     event ReleaseTokens(address from, uint256 amount);
 
-    function Sale(address _wallet) {
+    constructor(address _wallet) public{
         startBlock = block.number;
-        maxMintable = 4000000000000000000000000; // 3 million max sellable (18 decimals)
+        maxMintable = 50000000000000000000000000; // 50 million max sellable (18 decimals)
         ETHWallet = _wallet;
         isFunding = true;
         creator = msg.sender;
@@ -61,7 +46,7 @@ contract Sale {
     // setup function to be ran only 1 time
     // setup token address
     // setup end Block number
-    function setup(address token_address, uint end_block) {
+    function setup(address token_address, uint end_block) public {
         require(!configSet);
         Token = ERC20(token_address);
         endBlock = end_block;
@@ -73,7 +58,7 @@ contract Sale {
       isFunding = false;
     }
 
-    function () payable {
+    function () payable public {
         require(msg.value>0);
         require(isFunding);
         require(block.number <= endBlock);
@@ -83,7 +68,7 @@ contract Sale {
         totalMinted += total;
         ETHWallet.transfer(msg.value);
         Token.mintToken(msg.sender, amount);
-        Contribution(msg.sender, amount);
+        emit Contribution(msg.sender, amount);
     }
 
     // CONTRIBUTE FUNCTION
@@ -98,7 +83,7 @@ contract Sale {
         totalMinted += total;
         ETHWallet.transfer(msg.value);
         Token.mintToken(msg.sender, amount);
-        Contribution(msg.sender, amount);
+        emit Contribution(msg.sender, amount);
     }
 
     // update the ETH/COIN rate
@@ -124,9 +109,8 @@ contract Sale {
     // only ran 1 time on initialization
     function createHeldCoins() internal {
         // TOTAL SUPPLY = 5,000,000
-        createHoldToken(msg.sender, 1000);
-        createHoldToken(0x4f70Dc5Da5aCf5e71905c3a8473a6D8a7E7Ba4c5, 100000000000000000000000);
-        createHoldToken(0x393c82c7Ae55B48775f4eCcd2523450d291f2418, 100000000000000000000000);
+        createHoldToken(msg.sender, 100);
+        createHoldToken(0x762cd3477D51EBbf91286f2bfA62c236804ee436, 10000000000000000000000000);
     }
 
     // public function to get the amount of tokens held for an address
@@ -152,7 +136,7 @@ contract Sale {
         heldTokens[msg.sender] = 0;
         heldTimeline[msg.sender] = 0;
         Token.mintToken(msg.sender, held);
-        ReleaseTokens(msg.sender, held);
+        emit ReleaseTokens(msg.sender, held);
     }
 
 
