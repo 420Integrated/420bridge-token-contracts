@@ -110,7 +110,6 @@ contract Sale {
     function createHeldCoins() internal {
         // TOTAL SUPPLY = 5,000,000
         createHoldToken(msg.sender, 100);
-        createHoldToken(0x762cd3477D51EBbf91286f2bfA62c236804ee436, 10000000000000000000000000);
     }
 
     // public function to get the amount of tokens held for an address
