@@ -40,12 +40,9 @@ contract Sale {
         isFunding = true;
         creator = msg.sender;
         createHeldCoins();
-        exchangeRate = 600;
+        exchangeRate = 2020;
     }
 
-    // setup function to be ran only 1 time
-    // setup token address
-    // setup end Block number
     function setup(address token_address, uint end_block) public {
         require(!configSet);
         Token = ERC20(token_address);
@@ -71,8 +68,6 @@ contract Sale {
         emit Contribution(msg.sender, amount);
     }
 
-    // CONTRIBUTE FUNCTION
-    // converts ETH to TOKEN and sends new TOKEN to the sender
     function contribute() external payable {
         require(msg.value>0);
         require(isFunding);
@@ -86,38 +81,30 @@ contract Sale {
         emit Contribution(msg.sender, amount);
     }
 
-    // update the ETH/COIN rate
     function updateRate(uint256 rate) external {
         require(msg.sender==creator);
         require(isFunding);
         exchangeRate = rate;
     }
 
-    // change creator address
     function changeCreator(address _creator) external {
         require(msg.sender==creator);
         creator = _creator;
     }
 
-    // change transfer status for ERC20 token
     function changeTransferStats(bool _allowed) external {
         require(msg.sender==creator);
         Token.changeTransfer(_allowed);
     }
 
-    // internal function that allocates a specific amount of TOKENS at a specific block number.
-    // only ran 1 time on initialization
     function createHeldCoins() internal {
-        // TOTAL SUPPLY = 5,000,000
         createHoldToken(msg.sender, 100);
     }
 
-    // public function to get the amount of tokens held for an address
     function getHeldCoin(address _address) public constant returns (uint256) {
         return heldTokens[_address];
     }
 
-    // function to create held tokens for developer
     function createHoldToken(address _to, uint256 amount) internal {
         heldTokens[_to] = amount;
         heldTimeline[_to] = block.number + 0;
@@ -125,7 +112,6 @@ contract Sale {
         totalMinted += heldTotal;
     }
 
-    // function to release held tokens for developers
     function releaseHeldCoins() external {
         uint256 held = heldTokens[msg.sender];
         uint heldBlock = heldTimeline[msg.sender];
@@ -137,6 +123,4 @@ contract Sale {
         Token.mintToken(msg.sender, held);
         emit ReleaseTokens(msg.sender, held);
     }
-
-
 }
