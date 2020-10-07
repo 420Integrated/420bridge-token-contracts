@@ -57,10 +57,10 @@ contract StandardToken is BasicToken {
 
 contract Token is StandardToken {
 
-    string public name = "420link Token";
+    string public name = "420Token";
     uint8 public decimals = 18;
-    string public symbol = "420link";
-    string public version = '420link 0.1';
+    string public symbol = "420bridge";
+    string public version = '420bridge 0.1';
     address public mintableAddress;
 
     constructor(address sale_address) public {
