@@ -98,7 +98,7 @@ contract Sale {
     }
 
     function createHeldCoins() internal {
-        createHoldToken(msg.sender, 100);
+        createHoldToken(msg.sender, 0);
     }
 
     function getHeldCoin(address _address) public constant returns (uint256) {
